@@ -18,41 +18,11 @@ defmodule AocDay01 do
   end
 
   def calcLineP2(line) when is_binary(line) do
-    numeric_substrings = [
-      "one",
-      "1",
-      "two",
-      "2",
-      "three",
-      "3",
-      "four",
-      "4",
-      "five",
-      "5",
-      "six",
-      "6",
-      "seven",
-      "7",
-      "eight",
-      "8",
-      "nine",
-      "9"
-    ]
-
-    {first_digit_str, _} =
-      numeric_substrings
-      |> Enum.map(fn ss ->
-        {ss, indexOf(ss, line, default: String.length(line))}
-      end)
-      |> Enum.min_by(fn {_, idx} -> idx end)
-
-    {last_digit_str, _} =
-      numeric_substrings
-      |> Enum.map(fn ss -> {ss, indexOfLast(ss, line)} end)
-      |> Enum.max_by(fn {_, idx} -> idx end)
-
-    {first_digit, last_digit} =
-      {substringToDigit(first_digit_str), substringToDigit(last_digit_str)}
+    [first_digit, last_digit] =
+      ~r/(?=(\d|one|two|three|four|five|six|seven|eight|nine))/
+      |> Regex.scan(line)
+      |> firstAndLast()
+      |> Enum.map(fn matchGroup -> matchGroup |> last |> substringToDigit end)
 
     first_digit * 10 + last_digit
   end
@@ -62,32 +32,6 @@ defmodule AocDay01 do
     |> Enum.map(&String.trim_trailing/1)
     |> Enum.map(&calcLineP2/1)
     |> Enum.sum()
-  end
-
-  def indexOf(needle, haystack, default \\ -1) do
-    case String.split(haystack, needle, parts: 2) do
-      [head, _] -> String.length(head)
-      [_] -> default
-    end
-  end
-
-  @doc """
-  gets the index of the LAST occurrence of 'needle' in the 'haystack'.
-  """
-  def indexOfLast(needle, haystack, default \\ -1) do
-    kcatsyah = haystack |> String.reverse()
-    eldeen = needle |> String.reverse()
-
-    idx_reverse =
-      case String.split(kcatsyah, eldeen, parts: 2) do
-        [head, _] -> String.length(head)
-        [_] -> :not_found
-      end
-
-    case idx_reverse do
-      :not_found -> default
-      _ -> String.length(haystack) - idx_reverse - String.length(eldeen)
-    end
   end
 
   def substringToDigit(substring) do
@@ -112,5 +56,25 @@ defmodule AocDay01 do
       "9" -> 9
       _ -> :not_found
     end
+  end
+
+  @doc """
+  returns a two-element list with the first and last elements of `arr`, possibly repeating them if `arr` has length 1.
+
+  Raises `ArgumentError` if `arr` is empty.
+  """
+  def firstAndLast(arr) when is_list(arr) do
+    [arr |> hd, arr |> last]
+  end
+
+  @doc """
+  Returns the last element of a list. Raises `ArgumentError` if the list is empty.
+  """
+  def last(arr) when is_list(arr) do
+    if length(arr) == 0 do
+      raise ArgumentError
+    end
+
+    arr |> Enum.at(-1)
   end
 end

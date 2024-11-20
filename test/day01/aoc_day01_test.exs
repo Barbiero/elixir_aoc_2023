@@ -13,21 +13,6 @@ defmodule AocDay01Test do
     assert AocDay01.calcResult() == 53194
   end
 
-  test "get indexOf substring" do
-    assert AocDay01.indexOf("one", "12onethreefourone") == 2
-  end
-
-  test "get indexOfLast substring" do
-    assert AocDay01.indexOfLast("one", "12onethreefourone") ==
-             String.length("12onethreefourone") - String.length("one")
-
-    assert String.slice(
-             "12onethreefourone",
-             AocDay01.indexOfLast("one", "12onethreefourone")..String.length("12onethreefourone")
-           ) ==
-             "one"
-  end
-
   test "finds first and last digits" do
     assert AocDay01.calcLineP2("two1nine") == 29
     assert AocDay01.calcLineP2("eightwothree") == 83
@@ -36,6 +21,7 @@ defmodule AocDay01Test do
     assert AocDay01.calcLineP2("4nineeightseven2") == 42
     assert AocDay01.calcLineP2("zoneight234") == 14
     assert AocDay01.calcLineP2("7pqrstsixteen") == 76
+    assert AocDay01.calcLineP2("treb7uchet") == 77
   end
 
   test "read file and calc the known result part 2" do
